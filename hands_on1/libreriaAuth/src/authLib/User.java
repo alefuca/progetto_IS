@@ -1,0 +1,23 @@
+package authLib;
+
+public class User {
+	private String username;
+	private boolean admin;
+
+	public User(String username, boolean admin) {
+		this.username = username;
+		this.admin = admin;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public boolean getRole() {
+		return admin;
+	}
+
+	public boolean isAdmin() {
+		return admin;
+	}
+}
