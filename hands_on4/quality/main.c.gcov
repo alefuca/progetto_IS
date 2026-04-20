@@ -1,0 +1,708 @@
+        -:    0:Source:main.c
+        -:    0:Graph:app-main.gcno
+        -:    0:Data:app-main.gcda
+        -:    0:Runs:1
+        -:    1:#include <stdio.h>
+        -:    2:#include <string.h>
+        -:    3:#include <stdlib.h>
+        -:    4:#include <limits.h>
+        -:    5:#include <ctype.h>
+        -:    6:#include <stdint.h>
+        -:    7:
+        -:    8:#include "config.h"
+        -:    9:#include "auth.h"
+        -:   10:#include "app.h"
+        -:   11:
+        -:   12:void cambia_password(void);
+        -:   13:void rinomina_utente(void);
+        -:   14:void debug_extra(void);
+        -:   15:void operazione_composita(void);
+        -:   16:
+        -:   17:/* --- Utility input --- */
+function read_line called 7 returned 100% blocks executed 91%
+        7:   18:void read_line(const int8_t *prompt, int8_t *buf, size_t n){
+        7:   19:    printf("%s", prompt);
+call    0 returned 100%
+        7:   20:    fflush(stdout);
+call    0 returned 100%
+        7:   21:    if(fgets(buf, (int)n, stdin)){
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        7:   22:        size_t L = strlen(buf);
+       14:   23:        while(L && (buf[L-1]=='\n' || buf[L-1]=='\r')) buf[--L]='\0';
+branch  0 taken 93% (fallthrough)
+branch  1 taken 7%
+branch  2 taken 54%
+branch  3 taken 46% (fallthrough)
+branch  4 taken 0%
+branch  5 taken 100%
+        -:   24:    } else {
+    #####:   25:        buf[0]='\0';
+        -:   26:    }
+        7:   27:}
+        -:   28:
+function crea_utente called 2 returned 100% blocks executed 100%
+        2:   29:void crea_utente(void){
+        -:   30:    char u[AUTH_MAX_USER+1], p[AUTH_MAX_PASS+1];
+        2:   31:    read_line("Nuovo username: ", u, sizeof u);
+call    0 returned 100%
+        2:   32:    read_line("Nuova password: ", p, sizeof p);
+call    0 returned 100%
+        -:   33:
+        2:   34:    if(auth_add(u,p)==0){
+call    0 returned 100%
+branch  1 taken 50% (fallthrough)
+branch  2 taken 50%
+        1:   35:        puts("[OK] Utente creato.");
+call    0 returned 100%
+        -:   36:    } else {
+        1:   37:        puts("[ERRORE] Utente già esistente o input non valido.");
+call    0 returned 100%
+        -:   38:    }
+        2:   39:}
+        -:   40:
+        -:   41:/* --- effettua_login con 20 righe irraggiungibili --- */
+function effettua_login called 0 returned 0% blocks executed 0%
+    #####:   42:void effettua_login(void){
+        -:   43:    char u[AUTH_MAX_USER+1], p[AUTH_MAX_PASS+1];
+    #####:   44:    read_line("Username: ", u, sizeof u);
+call    0 never executed
+    #####:   45:    read_line("Password: ", p, sizeof p);
+call    0 never executed
+    #####:   46:    int r = auth_check(u,p);
+call    0 never executed
+    #####:   47:    if(r==1) puts("[SUCCESSO] Login corretto.");
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:   48:    else if(r==0) puts("[ERRORE] Credenziali errate.");
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:   49:    else puts("[ERRORE] Impossibile leggere il database.");
+call    0 never executed
+        -:   50:
+        -:   51:    if(0){
+        -:   52:        puts("DEBUG: inizio blocco morto");
+        -:   53:        int a = 0;
+        -:   54:        a++; a+=2; a+=3; a+=4; a+=5;
+        -:   55:        a+=6; a+=7; a+=8; a+=9; a+=10;
+        -:   56:        a+=11; a+=12; a+=13; a+=14; a+=15;
+        -:   57:        a+=16; a+=17; a+=18; a+=19; a+=20;
+        -:   58:        printf("Valore mai stampato: %d\n", a);
+        -:   59:        puts("DEBUG: fine blocco morto");
+        -:   60:    }
+    #####:   61:}
+        -:   62:
+        -:   63:/* --- cancella_utente con magic numbers --- */
+function cancella_utente called 1 returned 100% blocks executed 67%
+        1:   64:void cancella_utente(void){
+        -:   65:    char u[AUTH_MAX_USER+1];
+        1:   66:    read_line("Username da cancellare: ", u, sizeof u);
+call    0 returned 100%
+        -:   67:
+        1:   68:    int tentativi = 3;  /* magic number */
+       1*:   69:    for(int i = 0; i < tentativi; i++){
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+        1:   70:        if(auth_delete(u)==0){
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+        1:   71:            puts("[OK] Utente cancellato.");
+call    0 returned 100%
+        1:   72:            return;
+        -:   73:        } else {
+    #####:   74:            puts("[ERRORE] Utente non trovato o IO fallita.");
+call    0 never executed
+        -:   75:        }
+        -:   76:    }
+    #####:   77:    printf("Operazione terminata con codice interno %d\n", 42); /* magic number */
+call    0 never executed
+        -:   78:}
+        -:   79:
+function controlla_validita_input called 1 returned 100% blocks executed 45%
+        1:   80:int controlla_validita_input() {
+        1:   81:  int s = 0;
+        1:   82:  if(scanf("%d",&s)!=1){ 
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:   83:    while(getchar()!='\n'); 
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:   84:    puts("Input non valido."); 
+call    0 never executed
+    #####:   85:    return s; 
+        -:   86:  }
+        1:   87:  return s;
+        -:   88:}
+        -:   89:
+function modifica_utente called 1 returned 100% blocks executed 60%
+        1:   90:void modifica_utente(){
+        1:   91:    puts("1) Cambia password   2) Rinomina utente   3) Debug extra   4) Operazione composita");
+call    0 returned 100%
+        1:   92:    printf("Scelta: ");
+call    0 returned 100%
+        1:   93:    int s = controlla_validita_input();
+call    0 returned 100%
+        1:   94:    switch(s) {
+branch  0 taken 100%
+branch  1 taken 0%
+branch  2 taken 0%
+branch  3 taken 0%
+branch  4 taken 0%
+        1:   95:      case 1: cambia_password(); break;
+call    0 returned 100%
+    #####:   96:      case 2: rinomina_utente(); break;
+call    0 never executed
+    #####:   97:      case 3: debug_extra(); break;
+call    0 never executed
+    #####:   98:      case 4: operazione_composita(); break;
+call    0 never executed
+    #####:   99:      default: puts("Scelta non valida."); break;
+call    0 never executed
+        -:  100:    }
+        -:  101:
+        1:  102:}
+        -:  103:
+function operazione_composita called 0 returned 0% blocks executed 0%
+    #####:  104:void operazione_composita() {
+    #####:  105:  int a=0,b=1,c=2;
+    #####:  106:  for(int k=0;k<3;k++){
+branch  0 never executed
+branch  1 never executed (fallthrough)
+    #####:  107:    if(k==0){ puts("k==0"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  108:    else if(k==1){ puts("k==1"); continue; }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  109:    else if(k==2){ puts("k==2"); break; }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+        -:  110:  }
+    #####:  111:}
+        -:  112:
+function debug_choice called 0 returned 0% blocks executed 0%
+    #####:  113:void debug_choice(int debugChoice) {
+    #####:  114:  if(debugChoice==1){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  115:    puts("Esecuzione ramo A");
+call    0 never executed
+    #####:  116:  } else if(debugChoice==2){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  117:    puts("Esecuzione ramo B");
+call    0 never executed
+    #####:  118:  } else if(debugChoice==3){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  119:    puts("Esecuzione ramo C");
+call    0 never executed
+    #####:  120:  } else if(debugChoice==4){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  121:    int state = 0;
+    #####:  122:    for(int i=0;i<5;i++){
+branch  0 never executed
+branch  1 never executed
+    #####:  123:      if(i%2==0) state++;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  124:      else if(i%3==0) state+=2;
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  125:      else state--;
+    #####:  126:      if(state>3) { puts("state>3"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  127:      else if(state==3) { puts("state==3"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  128:      else if(state==2) { puts("state==2"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  129:      else if(state==1) { puts("state==1"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  130:      else { puts("state<=0"); }
+call    0 never executed
+        -:  131:    }
+        -:  132:  } else {
+    #####:  133:    puts("Ramo di default debug");
+call    0 never executed
+        -:  134:  }
+        -:  135:
+    #####:  136:} 
+        -:  137:
+function debug_extra called 0 returned 0% blocks executed 0%
+    #####:  138:void debug_extra() {
+        -:  139:  int debugChoice;
+    #####:  140:  printf("Debug extra: 1) Test A  2) Test B  3) Test C  4) Stress\n");
+call    0 never executed
+    #####:  141:  if(scanf("%d", &debugChoice)!=1){ 
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:  142:    while(getchar()!='\n'); 
+call    0 never executed
+branch  1 never executed (fallthrough)
+branch  2 never executed
+    #####:  143:    puts("Debug: input invalido"); 
+call    0 never executed
+    #####:  144:    return; 
+        -:  145:  }
+    #####:  146:  debug_choice(debugChoice);
+call    0 never executed
+        -:  147:}
+        -:  148:
+function controlla_psw called 1 returned 100% blocks executed 71%
+        1:  149:void controlla_psw(const char *np, int *haSpazi, int *haMaiuscola, int *haMinuscola, int *haSoloAlnum, int *haNumero) {
+        2:  150:  for(size_t i = 0; np[i] != '\0'; ++i){
+branch  0 taken 50%
+branch  1 taken 50% (fallthrough)
+       1*:  151:    if(isspace((unsigned char)np[i])) *haSpazi = 1;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+       1*:  152:    if(!isalnum((unsigned char)np[i])) *haSoloAlnum = 0;
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+       1*:  153:    if(isupper((unsigned char)np[i])) *haMaiuscola = 1; 
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        1:  154:    if(islower((unsigned char)np[i])) *haMinuscola = 1; 
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       1*:  155:    if(isdigit((unsigned char)np[i])) *haNumero = 1;  
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        -:  156:  }
+        1:  157:}
+        -:  158:
+function controlla_formato_psw called 1 returned 100% blocks executed 10%
+        1:  159:void controlla_formato_psw(const char *np, const char *u, int haSpazi, int haMaiuscola, int haMinuscola, int haSoloAlnum, int haNumero) {
+        1:  160:  size_t len = strlen(np);
+        1:  161:  if(len == 0u){ 
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  162:    puts("[ERRORE] Password vuota.");
+call    0 never executed
+        1:  163:  } else if(len < 6){
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+        1:  164:    puts("[ERRORE] Password troppo corta (<6).");
+call    0 returned 100%
+    #####:  165:  } else if(len > 64){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  166:    puts("[ERRORE] Password troppo lunga (>64).");
+call    0 never executed
+    #####:  167:  } else if(haSpazi != 0){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  168:    puts("[ERRORE] Password non deve contenere spazi.");
+call    0 never executed
+    #####:  169:  } else if((haSoloAlnum == 0) && (haMaiuscola == 0) && (haMinuscola == 0) && (haNumero == 0)){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+branch  6 never executed (fallthrough)
+branch  7 never executed
+    #####:  170:    puts("[ERRORE] Password priva di qualsiasi requisito.");
+call    0 never executed
+    #####:  171:  } else if((haMaiuscola == 0) && (haMinuscola == 0) && (haNumero != 0)){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+    #####:  172:    puts("[ERRORE] Password numerica senza lettere.");
+call    0 never executed
+    #####:  173:  } else if((haMaiuscola != 0) && (haMinuscola == 0) && (haNumero == 0)){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+    #####:  174:    puts("[ERRORE] Password solo maiuscole senza numeri.");
+call    0 never executed
+    #####:  175:  } else if((haMaiuscola == 0) && (haMinuscola != 0) && (haNumero == 0)){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+    #####:  176:    puts("[ERRORE] Password solo minuscole senza numeri.");
+call    0 never executed
+    #####:  177:  } else if((haMaiuscola != 0) && (haMinuscola != 0) && (haNumero == 0) && (len < 8)){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+branch  6 never executed (fallthrough)
+branch  7 never executed
+    #####:  178:    puts("[ERRORE] Password senza numeri e troppo corta (<8).");
+call    0 never executed
+    #####:  179:  } else if(np[0] == '!' || np[0] == '?') { 
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:  180:    puts("[ERRORE] Password non deve iniziare con ! o ?.");
+call    0 never executed
+        -:  181:  } else {
+    #####:  182:    if(len > 32){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  183:      puts("(warning) password lunga: procedo comunque");
+call    0 never executed
+        -:  184:    } else {
+    #####:  185:      puts("(nota) password non lunga: procedo comunque");
+call    0 never executed
+        -:  186:    }
+    #####:  187:    int rc = auth_change_password(u, np);
+call    0 never executed
+    #####:  188:    if(rc == 0){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  189:      puts("[OK] Password aggiornata.");
+call    0 never executed
+        -:  190:    } else {
+    #####:  191:      puts("[ERRORE] Utente non trovato o IO fallita.");
+call    0 never executed
+        -:  192:    }
+        -:  193:  }
+        1:  194:}
+        -:  195:
+function cambia_password called 1 returned 100% blocks executed 100%
+        1:  196:void cambia_password(void) {
+        -:  197:  char u[AUTH_MAX_USER+1], np[AUTH_MAX_PASS+1];
+        -:  198:  
+        1:  199:  read_line("Username: ", u, sizeof u);
+call    0 returned 100%
+        1:  200:  read_line("Nuova password: ", np, sizeof np);
+call    0 returned 100%
+        -:  201:
+        1:  202:  int haSpazi = 0, haSoloAlnum = 1, haMaiuscola = 0, haMinuscola = 0, haNumero = 0;
+        1:  203:  controlla_psw(np, &haSpazi, &haMaiuscola, &haMinuscola, &haSoloAlnum, &haNumero);
+call    0 returned 100%
+        1:  204:  controlla_formato_psw(np, u, haSpazi, haMaiuscola, haMinuscola, haSoloAlnum, haNumero);
+call    0 returned 100%
+        1:  205:}
+        -:  206:
+function controlla_valore_nu called 0 returned 0% blocks executed 0%
+    #####:  207:void controlla_valore_nu(const char* nu) {
+    #####:  208:  switch(nu[0]){
+branch  0 never executed
+branch  1 never executed
+branch  2 never executed
+branch  3 never executed
+    #####:  209:    case 'a': case 'A':
+    #####:  210:      puts("Info: username inizia per A");
+call    0 never executed
+    #####:  211:    case 'b': case 'B':
+    #####:  212:      puts("Info: username inizia per A/B");
+call    0 never executed
+    #####:  213:    case 'c': case 'C':
+    #####:  214:      puts("Info: username inizia per A/B/C");
+call    0 never executed
+    #####:  215:      break;
+    #####:  216:    default:
+    #####:  217:      if(isdigit((unsigned char)nu[0])) puts("Info: username inizia con cifra");
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  218:      else puts("Info: username con iniziale generica");
+call    0 never executed
+    #####:  219:      break;
+        -:  220:  }
+    #####:  221:}
+        -:  222:
+function rinomina_utente called 0 returned 0% blocks executed 0%
+    #####:  223:void rinomina_utente() {
+        -:  224:  char ou[AUTH_MAX_USER+1], nu[AUTH_MAX_USER+1];
+    #####:  225:  read_line("Username attuale: ", ou, sizeof ou);
+call    0 never executed
+    #####:  226:  read_line("Nuovo username: ",  nu, sizeof nu);
+call    0 never executed
+        -:  227:
+    #####:  228:  if(strlen(nu)==0){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  229:    puts("[ERRORE] Nuovo username vuoto.");
+call    0 never executed
+    #####:  230:  } else if(strlen(nu)>AUTH_MAX_USER){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  231:    puts("[ERRORE] Nuovo username troppo lungo.");
+call    0 never executed
+    #####:  232:  } else if(strchr(nu, ':') || strchr(nu, ':')){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:  233:    puts("[ERRORE] Carattere ':' non permesso.");
+call    0 never executed
+    #####:  234:  } else if(strcmp(ou, nu)==0 && (strlen(ou)==strlen(nu))){
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+    #####:  235:    puts("[ERRORE] Nuovo username uguale al precedente.");
+call    0 never executed
+        -:  236:  } else if(nu[0]==0 ? 1==0 : 0){
+        -:  237:    puts("[ERRORE] Branch morto.");
+        -:  238:  } else {
+    #####:  239:    controlla_valore_nu(nu);
+call    0 never executed
+    #####:  240:    int ok = auth_rename_user(ou,nu);
+call    0 never executed
+    #####:  241:    if(ok==0) puts("[OK] Username aggiornato.");
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  242:    else if(ok==-1 && ok==-1) puts("[ERRORE] Utente non trovato o nuovo username già in uso.");
+branch  0 never executed (fallthrough)
+branch  1 never executed
+branch  2 never executed (fallthrough)
+branch  3 never executed
+call    4 never executed
+    #####:  243:    else puts("[ERRORE] Stato inatteso.");
+call    0 never executed
+        -:  244:  }
+    #####:  245:}
+        -:  246:
+        -:  247:/* --- Undefined Behavior demo --- */
+function demo_ub called 0 returned 0% blocks executed 0%
+    #####:  248:void demo_ub(void){
+    #####:  249:    puts("\n[UB] Esempi di undefined behavior (possono crashare):");
+call    0 never executed
+    #####:  250:    { int x; printf("[UB1] non init = %d\n", x); }
+call    0 never executed
+    #####:  251:    { int m = INT_MAX; m = m + 1; printf("[UB2] overflow signed = %d\n", m); }
+call    0 never executed
+    #####:  252:    { int a[1] = {0}; a[1] = 123; printf("[UB3] out-of-bounds write fatto\n"); }
+call    0 never executed
+    #####:  253:    { char *p = (char*)malloc(4); if(p){ strcpy(p, "Hi"); } free(p); p[0]='X'; printf("[UB4] use-after-free\n"); }
+branch  0 never executed (fallthrough)
+branch  1 never executed
+call    2 never executed
+    #####:  254:    { char *s = "ciao"; s[0]='C'; printf("[UB5] literal modificato: %s\n", s); }
+call    0 never executed
+    #####:  255:    { char buf[]="abcdef"; memcpy(buf+1, buf, 5); printf("[UB6] memcpy overlap: %s\n", buf); }
+call    0 never executed
+    #####:  256:    { int i=0; float *fp=(float*)&i; *fp=1.0f; printf("[UB7] strict-aliasing violato, i=%d\n", i); }
+call    0 never executed
+    #####:  257:    { int s=1; int r=s<<31; int t=(-1)>>1; printf("[UB8] shift: r=%d t=%d\n", r, t); }
+call    0 never executed
+    #####:  258:    puts("[UB] Fine demo\n");
+call    0 never executed
+    #####:  259:}
+        -:  260:
+        -:  261:/* helper per unspecified */
+function f_side called 0 returned 0% blocks executed 0%
+    #####:  262:static int f_side(int *x){ printf("f_side x=%d -> x++\n", *x); return (*x)++; }
+call    0 never executed
+function g_side called 0 returned 0% blocks executed 0%
+    #####:  263:static int g_side(int *x){ printf("g_side x=%d -> ++x\n", *x); return ++(*x); }
+call    0 never executed
+        -:  264:
+        -:  265:/* --- Unspecified Behavior demo --- */
+function demo_unspecified called 0 returned 0% blocks executed 0%
+    #####:  266:void demo_unspecified(void){
+    #####:  267:    puts("\n[UNSPECIFIED] Ordine di valutazione non specificato:");
+call    0 never executed
+    #####:  268:    { int i=0; int r = f_side(&i) + g_side(&i); printf("[UNSPEC1] r=%d i=%d\n", r, i); }
+call    0 never executed
+call    1 never executed
+call    2 never executed
+    #####:  269:    { int i=10, j=20; printf("[UNSPEC2] %d e %d\n", i++, ++j); printf("[UNSPEC2] post i=%d j=%d\n", i, j); }
+call    0 never executed
+call    1 never executed
+    #####:  270:    puts("[UNSPECIFIED] Fine demo\n");
+call    0 never executed
+    #####:  271:}
+        -:  272:
+function demo_comment_mix called 0 returned 0% blocks executed 0%
+    #####:  273:void demo_comment_mix(void){
+    #####:  274:    puts("Demo mix commenti /* e //:");
+call    0 never executed
+    #####:  275:    printf("[A] Dopo /* ... // ... */ si stampa\n");
+call    0 never executed
+    #####:  276:    printf("[B] La riga sopra era // singola riga\n");
+call    0 never executed
+        -:  277:
+        -:  278:#if 0
+        -:  279:    printf("chiude */ prima!");
+        -:  280:    printf("Questa potrebbe rompere la build se sopra fosse attivo\n");
+        -:  281:#endif
+        -:  282:
+        -:  283:#if 0
+        -:  284:    int y = 0;
+        -:  285:#endif
+        -:  286:
+    #####:  287:    puts("Fine demo mix commenti.");
+call    0 never executed
+    #####:  288:}
+        -:  289:
+function main_choice called 5 returned 100% blocks executed 17%
+        5:  290:int main_choice(int choice) {
+        5:  291:    switch(choice){
+branch  0 taken 40%
+branch  1 taken 0%
+branch  2 taken 20%
+branch  3 taken 20%
+branch  4 taken 0%
+branch  5 taken 0%
+branch  6 taken 0%
+branch  7 taken 0%
+branch  8 taken 20%
+branch  9 taken 0%
+        2:  292:      case 1: crea_utente(); break;
+call    0 returned 100%
+    #####:  293:      case 2: effettua_login(); break;
+call    0 never executed
+        1:  294:      case 3: cancella_utente(); break;
+call    0 returned 100%
+        1:  295:      case 4: modifica_utente(); break;
+call    0 returned 100%
+    #####:  296:      case 5:
+    #####:  297:        puts("Demo di funzione troppo lunga:");
+call    0 never executed
+    #####:  298:        printf("Parte 1...\n"); printf("Parte 2...\n"); printf("Parte 3...\n"); printf("Parte 4...\n"); printf("Parte 5...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  299:        printf("Parte 6...\n"); printf("Parte 7...\n"); printf("Parte 8...\n"); printf("Parte 9...\n"); printf("Parte 10...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  300:        printf("Parte 11...\n"); printf("Parte 12...\n"); printf("Parte 13...\n"); printf("Parte 14...\n"); printf("Parte 15...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  301:        printf("Parte 16...\n"); printf("Parte 17...\n"); printf("Parte 18...\n"); printf("Parte 19...\n"); printf("Parte 20...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  302:        printf("Parte 21...\n"); printf("Parte 22...\n"); printf("Parte 23...\n"); printf("Parte 24...\n"); printf("Parte 25...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  303:        printf("Parte 26...\n"); printf("Parte 27...\n"); printf("Parte 28...\n"); printf("Parte 29...\n"); printf("Parte 30...\n");
+call    0 never executed
+call    1 never executed
+call    2 never executed
+call    3 never executed
+call    4 never executed
+    #####:  304:        printf("...funzione lunga senza modularità!\n");
+call    0 never executed
+    #####:  305:        break;
+    #####:  306:      case 6: demo_ub(); break;
+call    0 never executed
+    #####:  307:      case 7: demo_unspecified(); break;
+call    0 never executed
+    #####:  308:      case 8: demo_comment_mix(); break;
+call    0 never executed
+        1:  309:      case 0: puts("Bye."); return 0;
+call    0 returned 100%
+    #####:  310:      default: puts("Scelta non valida.");
+call    0 never executed
+        -:  311:    }
+        4:  312:    return 1;
+        -:  313:}
+        -:  314:
+function mostra_menu called 5 returned 100% blocks executed 100%
+        5:  315:void mostra_menu() {
+        5:  316:  puts("\n=== MENU ===");
+call    0 returned 100%
+        5:  317:  puts("1) Crea utente");
+call    0 returned 100%
+        5:  318:  puts("2) Login");
+call    0 returned 100%
+        5:  319:  puts("3) Cancella utente");
+call    0 returned 100%
+        5:  320:  puts("4) Modifica utente");
+call    0 returned 100%
+        5:  321:  puts("5) Extra (demo funzione lunga)");
+call    0 returned 100%
+        5:  322:  puts("6) Demo: Undefined Behavior (pericoloso)");
+call    0 returned 100%
+        5:  323:  puts("7) Demo: Unspecified Behavior");
+call    0 returned 100%
+        5:  324:  puts("8) Demo mix commenti /* e //");
+call    0 returned 100%
+        5:  325:  puts("0) Esci");
+call    0 returned 100%
+        5:  326:  printf("Scelta: ");
+call    0 returned 100%
+        5:  327:}
+        -:  328:
+function main called 1 returned 100% blocks executed 62%
+        1:  329:int main(void){
+        1:  330:    long badLong1 = 5l;
+        1:  331:    long badLong2 = 123456789l;
+        1:  332:    long badLong3 = -42l;
+        -:  333:
+        1:  334:    if(auth_init(DB_PATH) != 0){
+call    0 returned 100%
+branch  1 taken 100% (fallthrough)
+branch  2 taken 0%
+    #####:  335:        puts("[FATAL] Impossibile inizializzare il database");
+call    0 never executed
+    #####:  336:        return 1;
+        -:  337:    }
+        -:  338:
+        4:  339:    for(;;){
+        5:  340:        mostra_menu();
+call    0 returned 100%
+        5:  341:        int choice = -1;
+       5*:  342:        if(scanf("%d", &choice)!=1){ while(getchar()!='\n'); continue; }
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+call    3 never executed
+branch  4 never executed (fallthrough)
+branch  5 never executed
+        5:  343:        while(getchar()!='\n');
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+        5:  344:        int n = main_choice(choice);
+call    0 returned 100%
+        5:  345:        if (n == 0) {
+branch  0 taken 20% (fallthrough)
+branch  1 taken 80%
+        1:  346:          return 0;
+        -:  347:        }
+        -:  348:    }
+        -:  349:}
